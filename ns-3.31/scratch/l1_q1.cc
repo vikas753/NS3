@@ -41,25 +41,32 @@ main (int argc, char *argv[])
   LogComponentEnable ("UdpEchoClientApplication", LOG_LEVEL_INFO);
   LogComponentEnable ("UdpEchoServerApplication", LOG_LEVEL_INFO);
 
+  // Declare nodes that would be linked to a point-point cable
   NodeContainer p2pnodes;
   p2pnodes.Create(2);
   
   
   PointToPointHelper pointToPoint;
+  
+  // Modify the data-rate to 5Mbps as required in the assignment
   pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("5Mbps"));
   pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
 
+  // Install peripheral cards for point-point link defined above
   NetDeviceContainer device_nodes;
   device_nodes = pointToPoint.Install (p2pnodes);
   
+  // Install default UDP network stack on p2p nodes 
   InternetStackHelper stack;
   stack.Install (p2pnodes);
 
+  // Assign an IPv4 address block as below on those nodes
   Ipv4AddressHelper address;
   address.SetBase ("192.168.2.0", "255.255.255.0");
 
   Ipv4InterfaceContainer interfaces = address.Assign (device_nodes);
   
+  // Echo server listens on port 63
   UdpEchoServerHelper echoServer (63);
 
   ApplicationContainer serverApps = echoServer.Install (p2pnodes.Get(1));
