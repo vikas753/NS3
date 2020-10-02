@@ -22,9 +22,9 @@
 
 // Default Network Topology
 //
-//       10.1.1.0
-// n0 -------------- n1
-//    point-to-point
+//       192.168.2.0
+// n0 ----------------- n1
+//      point-to-point
 //
  
 using namespace ns3;
@@ -48,8 +48,8 @@ main (int argc, char *argv[])
   
   PointToPointHelper pointToPoint;
   
-  // Modify the data-rate to 5Mbps as required in the assignment
-  pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("5Mbps"));
+  // Modify the data-rate to 10Mbps as required in the assignment
+  pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("10Mbps"));
   pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
 
   // Install peripheral cards for point-point link defined above
@@ -81,7 +81,9 @@ main (int argc, char *argv[])
   ApplicationContainer clientApps = echoClient.Install (p2pnodes.Get(0));
   clientApps.Start (Seconds (2.0));
   clientApps.Stop (Seconds (10.0));
-
+  
+  pointToPoint.EnablePcapAll ("l1_q1");
+  
   Simulator::Run ();
   Simulator::Destroy ();
   return 0;
